@@ -44,12 +44,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eggjs/egg-grpc-util.git"
+    "url": "git+https://github.com/Hl354/egg-grpc-util"
   },
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
-  "homepage": "https://github.com/eggjs/egg-grpc-util#readme",
+  "homepage": "https://github.com/Hl354/egg-grpc-util#readme",
   "author": "huanglei",
   "license": "MIT"
 }
