@@ -1,6 +1,6 @@
 {
   "name": "egg-grpc-util",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "util for grpc",
   "eggPlugin": {
     "name": "grpcUtil"
@@ -37,7 +37,8 @@
   },
   "files": [
     "config",
-    "app.js"
+    "app.js",
+    "lib/"
   ],
   "ci": {
     "version": "8, 10"

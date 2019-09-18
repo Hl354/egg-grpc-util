@@ -1,7 +1,7 @@
 'use strict';
 
-const RpcServer = require('lib/rpcServer');
-const RpcClient = require('lib/rpcClient');
+const RpcServer = require('./lib/rpcServer');
+const RpcClient = require('./lib/rpcClient');
 
 class AppBootHook {
   constructor(app) {
