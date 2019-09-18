@@ -103,8 +103,70 @@ see [config/config.default.js](config/config.default.js) for more detail.
 
 ## Example
 
-<!-- example here -->
+```js
+   // 下面是一个路径在app/prroto中的login.proto文件
+   // package name = login <=> (package login;)
+   // service name = login <=> (service login)
+   // 函数有两个 1：login 函数 <=> (rpc login(pingRequest))
+   //           2: signUp 函数 <=> (rpc signUp(pingRequest))
+   syntax = "proto3";
+   
+   package login;
+   
+   service login{
+       rpc login(pingRequest) returns (pingReply) {};
+       rpc signUp(pingRequest) returns (pingReply) {}
+   }
+   
+   message pingRequest {
+       string userName = 1;
+       string password = 2;
+   }
+   
+   message pingReply {
+       int32 code = 1;
+       string msg = 2;
+   }
 
+```
+```js
+   // 所希望指向的函数为在app/service下的login文件中的login和signUp函数 <=> (pointFunArray: ['login.login', 'login.signUp'])
+   'use strict';
+   const Service = require('egg').Service;
+   
+   class Login extends Service {
+     async login(req, callback) {
+       const request = req.request;
+       if (request.userName === 'abc' && request.password === 'abc') {
+         callback(null, { code: 1, msg: 'login' });
+       }
+       callback(null, { code: 0, msg: 'login' });
+     }
+     async signUp(req, callback) {
+       const request = req.request;
+       if (request.userName === 'abc1' && request.password === 'abc1') {
+         callback(null, { code: 1, msg: 'signUp' });
+       }
+       callback(null, { code: 0, msg: 'signUp!' });
+     }
+   }
+   
+   module.exports = Login;
+```
+```config
+   // 这个proto文件在rpcServer的手动配置为
+   {
+       path: 'app/proto/login.proto',
+       packageService: 'login.login',
+       functionArray: ['login', 'signUp'],
+       pointFunArray: ['login.login', 'login.signUp'],
+   }
+   // 这个proto文件在rpcClient的手动配置为
+   {
+       path: 'app/proto/login.proto',
+       packageService: 'login.login',
+   }
+```
 ## Questions & Suggestions
 
 Please open an issue [here](https://github.com/eggjs/egg/issues).
