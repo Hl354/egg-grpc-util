@@ -9,18 +9,23 @@ exports.grpcUtil = {
   rpcServer: {
     host: '0.0.0.0',
     port: 50051,
+    autoConfig: 0,
+    protoPath: 'app/proto',
     protoArray: [{
       path: 'app/proto/login.proto',
-      protoInfo: 'login.login.login',
-      realFunction: 'user.login',
+      packageService: 'login.login',
+      functionArray: ['login', 'signUp'],
+      pointFunArray: ['user.login', 'user.signUp'],
     }],
   },
   rpcClient: {
     host: '0.0.0.0',
     port: 50051,
+    autoConfig: 0,
+    protoPath: 'app/proto',
     protoArray: [{
       path: 'app/proto/login.proto',
-      protoInfo: 'login.login',
+      packageService: 'login.login',
     }],
   },
 };
