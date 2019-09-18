@@ -167,6 +167,17 @@ see [config/config.default.js](config/config.default.js) for more detail.
        packageService: 'login.login',
    }
 ```
+```js
+   // 当配置了客户端之后如何使用？
+   // 1：自动配置,假设配置的时在app/proto/user/login.proto文件，里面有函数sign
+   // userLogin <=> user + login的首字母大写
+        ctx.app.userLogin.login({参数对象}, (err, response){回调});
+
+   // 2：手动配置，假设手动配置的packageService为user.login，有一个函数sign
+   // userLogin <=> user + login的首字母大写
+        ctx.app.userLogin.login({参数对象}, (err, response){回调});
+      
+```
 ## Questions & Suggestions
 
 Please open an issue [here](https://github.com/eggjs/egg/issues).
