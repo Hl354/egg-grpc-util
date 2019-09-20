@@ -15,6 +15,13 @@ Description here.
 $ npm i egg-grpc-util --save
 ```
 
+## Prompt
+```
+目前只支持简单的RPC服务，不支持带有流的。
+```
+
+
+
 ## Usage
 
 ```js
