@@ -31,8 +31,8 @@ exports.grpcUtil = {
 // {app_root}/config/config.default.js
 // 自动配置config写法
 exports.grpcUtil = {
-    // rpcServer为grpc服务的配置，意味提供服务的
-    // rpcClient为调用服务的配置
+    // rpcServer为grpc服务的配置，意味提供服务的 可选
+    // rpcClient为调用服务的配置 可选
     rpcServer: {
           // host为建立服务绑定的ip，port为端口
           host: '0.0.0.0',
@@ -88,12 +88,15 @@ exports.grpcUtil = {
           protoArray: [{
             path: 'app/proto/user/userInfo.proto',
             packageService: 'userInfo.userInfo',
+            functionArray: ['userInfo'],
           },{
             path: 'app/proto/login.proto',
             packageService: 'login.login',
+            functionArray: ['login', 'signUp'],
           },{
             path: 'app/proto/user/admin/adminInfo.proto',
             packageService: 'adminInfo.adminInfo',
+            functionArray: ['adminInfo'],
           }],
         },
 };
@@ -131,26 +134,24 @@ see [config/config.default.js](config/config.default.js) for more detail.
 ```
 ```js
    // 所希望指向的函数为在app/service下的login文件中的login和signUp函数 <=> (pointFunArray: ['login.login', 'login.signUp'])
-   'use strict';
+   // 在login.js中有两个函数，分别为login和signUp，注意这两个函数的参数格式为{userName, password}
+   // 而不是(userName, password)，因为传过来的是对象，并不能确定顺序，所以切记参数形式必须为{userName, password}这种
+  'use strict';
    const Service = require('egg').Service;
-   
    class Login extends Service {
-     async login(req, callback) {
-       const request = req.request;
-       if (request.userName === 'abc' && request.password === 'abc') {
-         callback(null, { code: 1, msg: 'login' });
-       }
-       callback(null, { code: 0, msg: 'login' });
-     }
-     async signUp(req, callback) {
-       const request = req.request;
-       if (request.userName === 'abc1' && request.password === 'abc1') {
-         callback(null, { code: 1, msg: 'signUp' });
-       }
-       callback(null, { code: 0, msg: 'signUp!' });
-     }
+       async login({userName, password}) {
+           if (userName === 'abc' && password === 'abc') {
+             return { code: 1, msg: 'login' };
+           }
+           return { code: 0, msg: 'login' };
+         }
+       async signUp({userName, password}) {
+           if (userName === 'abc' && password === 'abc') {
+             return { code: 1, msg: 'signUp' };
+           }
+           return { code: 0, msg: 'signUp' };
+         }
    }
-   
    module.exports = Login;
 ```
 ```config
@@ -165,17 +166,26 @@ see [config/config.default.js](config/config.default.js) for more detail.
    {
        path: 'app/proto/login.proto',
        packageService: 'login.login',
+       functionArray: ['login', 'signUp'],
    }
 ```
 ```js
    // 当配置了客户端之后如何使用？
-   // 1：自动配置,假设配置的时在app/proto/user/login.proto文件，里面有函数sign
+   // 不管是自动配置还是手动配置，所挂载到app的Client都是proto中的package名称+service名称
+   // 例如packageName = 'user',serviceName = 'login' 则Client为userLogin
+   // 函数名称functionName为functionArray中配置的，若是自动配置则packageName==serviceName==functionName
    // userLogin <=> user + login的首字母大写
-        ctx.app.userLogin.login({参数对象}, (err, response){回调});
+   // 使用方式一：回调函数
+    ctx.app.userLogin.login({userName: '123', password: '123'}, (err, response){
+      /**
+        在这里可以处理返回来的结果
+      */
+      doTo();
+    });
+   // 使用方式二：async/await
+    const res1 = await ctx.app.userLogin.login({userName: '123', password: '123'});
+    console.log(res1);
 
-   // 2：手动配置，假设手动配置的packageService为user.login，有一个函数sign
-   // userLogin <=> user + login的首字母大写
-        ctx.app.userLogin.login({参数对象}, (err, response){回调});
       
 ```
 ## Questions & Suggestions

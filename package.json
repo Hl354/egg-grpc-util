@@ -1,6 +1,6 @@
 {
   "name": "egg-grpc-util",
-  "version": "2.0.3",
+  "version": "3.0.1",
   "description": "util for grpc",
   "eggPlugin": {
     "name": "grpcUtil"
@@ -12,7 +12,8 @@
   ],
   "dependencies": {
     "fs": "0.0.1-security",
-    "grpc": "^1.23.3"
+    "grpc": "^1.23.3",
+    "promisify-call": "^2.0.4"
   },
   "devDependencies": {
     "autod": "^3.0.1",
