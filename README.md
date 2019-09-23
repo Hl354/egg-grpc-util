@@ -41,16 +41,16 @@ exports.grpcUtil = {
     // rpcServer为grpc服务的配置，意味提供服务的 可选
     // rpcClient为调用服务的配置 可选
     rpcServer: {
-          // host为建立服务绑定的ip，port为端口
+          // host(必选)为建立服务绑定的ip，port(必选)为端口
           host: '0.0.0.0',
           port: 50051,
           // autoConfig是否自动配置 1为自动配置。意思为自动扫描protoPath字段下的
           // 路径的proto文件，自动配置有一些限制，主要有以下几点
           // 1：proto文件的文件名,package,service,function名字必须统一
           // 2：对应的函数必须在app/service的路径和在指定的proto路径致
-          // 3：proto中的函数名和指定的函数名致，且一个proto文件只能有一个函数
+          // 3：proto中的函数名和指定的函数名致，且一个proto文件只能有一个函数，函数参数接受方式必须为fun({param1, param2})
           autoConfig: 1,
-          // protoPath设定为自动配置时指定的proto文件路径
+          // protoPath(必选)设定为自动配置时指定的proto文件路径
           protoPath: 'app/proto',
         },
         rpcClient: {
@@ -64,19 +64,23 @@ exports.grpcUtil = {
 // 手动配置config写法
 exports.grpcUtil = {
     rpcServer: {
-          // host为建立服务绑定的ip，port为端口
+          // host(必选)为建立服务绑定的ip，port(必选)为端口
           host: '0.0.0.0',
           port: 50051,
           // 手动输入配置protoArray唯一个数组，个数对应想要配置为服务的proto文件
-          // path：proto文件路径
-          // packageService： proto文件中的package和service名字的组合，.隔开
-          // functionArray：proto文件中函数的名称数组
-          // pointFunArray：对应的真实函数，login.login代表为service下的login文件中的login函数
+          // path(必选)：proto文件路径
+          // packageService(必选)： proto文件中的package和service名字的组合，.隔开
+          // functionArray(必选)：proto文件中函数的名称数组
+          // pointFunArray(必选)：对应的真实函数，login.login代表为service下的login文件中的login函数
+          // paramArray(可选)：对应的函数的参数列表，可选，如果配置了则顺序必须和函数致，这个配置的作用是因为如果你的函数参数
+          // 是fun(param1, param2)这样的形式而不是fun({param1, param2})这种时，客户端传入的是一个对象，第一种方式无
+          // 法正确接收到，所以配置这个，可以自动帮助转换，而不需要修改代码
           protoArray: [{
             path: 'app/proto/login.proto',
             packageService: 'login.login',
             functionArray: ['login', 'signUp'],
             pointFunArray: ['login.login', 'login.signUp'],
+            paramArray: ['userName', 'password'],
           },{
             path: 'app/proto/user/userInfo.proto',
             packageService: 'userInfo.userInfo',
@@ -141,8 +145,8 @@ see [config/config.default.js](config/config.default.js) for more detail.
 ```
 ```js
    // 所希望指向的函数为在app/service下的login文件中的login和signUp函数 <=> (pointFunArray: ['login.login', 'login.signUp'])
-   // 在login.js中有两个函数，分别为login和signUp，注意这两个函数的参数格式为{userName, password}
-   // 而不是(userName, password)，因为传过来的是对象，并不能确定顺序，所以切记参数形式必须为{userName, password}这种
+   // 在login.js中有两个函数，分别为login和signUp，注意如果没有配置paramArray这个选项时，这两个函数的参数格式为{userName, password}
+   // 而不是(userName, password)，因为传过来的是对象，所以切记参数形式必须为{userName, password}这种
   'use strict';
    const Service = require('egg').Service;
    class Login extends Service {
